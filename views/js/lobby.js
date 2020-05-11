@@ -1,18 +1,25 @@
 // const socket = io()
 socket.emit('join-req', {name, lobby})
 
+const goAway = document.getElementById('goAway')
+goAway.addEventListener('click', () => {
+    document.getElementById('instructions').remove()
+})
+
+//TODO: make this your color
+const colorInst = document.getElementById('colorInst')
+
 //User List Stuff
 const userList = document.getElementById('userList')
 socket.on('user-list-change', ({users}) => {
-    var html = ejs.render('<h3> Players (<%= users.length %>): </h3>', {users: users})
+    var html = ejs.render('<span> Players (<%= users.length %>): </span>', {users: users})
     var color, ready, temp
     var count = 0
     users.forEach( (user) => {
-        temp = ((user.num-1) / users.length)
-        color = `rgb(${ 55 + temp * 200}, ${ 155 + temp * 100}, ${ 255 - temp * 200})`
-        ready = user.ready ? '✔' : 'x'
-        html += ejs.render('<span style="color:<%= color %>"> <%= num + ") " + username + ": " + ready + " " %> </span>',
-         {num: user.num, username: user.name, color: color, ready: ready})
+        color = `rgb(${user.color.r}, ${user.color.g}, ${user.color.b})`
+        ready = user.ready ? '(ready)' : '(not ready)'
+        html += ejs.render('<span style="color:<%= color %>"> <%= username + " " + ready %> </span>',
+         {username: user.name, color: color, ready: ready})
         count++
         if (count % 6 == 0) {
             count = 0
@@ -45,6 +52,7 @@ socket.on('game-start', () => {
 //Canvas stuff
 let canvas = document.getElementById('canvas')
 var ctx = canvas.getContext('2d')
+
 let dpi = window.devicePixelRatio
 
 function fix_dpi() {
@@ -60,8 +68,12 @@ function fix_dpi() {
 }
 
 socket.on('game-state-change', ({game}) => {
+
+    const snakes = game.snakes
+    const fruitPos = game.fruitPos
+
     fix_dpi()
-    //console.log('recieved game tick')
+
     var sw = (canvas.width / game.board.length)
     var sh = (canvas.height / game.board.length)
 
@@ -82,60 +94,59 @@ socket.on('game-state-change', ({game}) => {
         ctx.lineTo(sw * c, canvas.height)
         ctx.stroke()
     }
-    var red, green, blue, maxRGB, minRGB, cr, cg, cb
-    ctx.font = `${sh}px monospace`;
-    for (var r = 0; r < game.board.length; r++) {
-        for (var c = 0; c < game.board.length; c++) {
 
-            if (game.board[r][c] > 0) {
-
-                var temp = ((game.board[r][c]-1) / game.numSnakes)
-                red = 55 + temp * 200
-                green = 155 + temp * 100
-                blue = 255 - temp * 200
-                maxRGB = Math.max(red, green, blue)
-                minRGB = Math.min(red, green, blue)
-
-                ctx.fillStyle = `rgb(${red}, ${green}, ${blue})`
-                ctx.fillRect(sw*c, sh*r, sw, sh)
-
-                cr = maxRGB + minRGB - red
-                cg = maxRGB + minRGB - green
-                cb = maxRGB + minRGB - blue
-
-                ctx.fillStyle = `rgb(${cr}, ${cg}, ${cb})`
-                ctx.fillText(game.board[r][c], sw*c + sw / 4, sh*r + (3 * sh / 4))
-
-            } else if (game.board[r][c] == -1) {
-                ctx.strokeStyle = 'white'
-                ctx.beginPath()
-                ctx.arc(sw*c + (sw / 2), sh*r + (sh / 2), sw / 4, 0, 2 * Math.PI)
-                ctx.stroke()
+    var snake, alive
+    for (var sid in snakes) {
+        snake = snakes[sid]
+        var color = `rgb(${snake.color.r}, ${snake.color.g}, ${snake.color.b})`
+        alive = snake.alive
+        for (var i = 0; i < snake.body.length; i++) {
+            ctx.fillStyle = color
+            ctx.fillRect(sw * snake.body[i][1], sh * snake.body[i][0], sw, sh)
+            if (!alive) {
+                ctx.fillStyle = 'white'
+                ctx.font = '15px monospace'
+                ctx.fillText(':(', sw * snake.body[i][1] + 0.5 * sw, sh * snake.body[i][0] + 0.5 * sh)
             }
         }
     }
 
+    ctx.strokeStyle = 'white'
+    ctx.beginPath();
+    ctx.arc(fruitPos[1] * sw + sw / 2, fruitPos[0] * sh + sh / 2, sw / 4, 0, 2 * Math.PI);
+    ctx.stroke();
+
+
+
 })
 
+const dir = document.getElementById('dir')
 //Handle key inputs
 document.onkeydown = (e) => {
 
     e = e || window.event;
+    var dirStr = 'none'
+    var arrowKeys = false
 
     if (e.keyCode == '38') {
         e.preventDefault()
-        socket.emit('move', {dir: 'up'})
+        dirStr = 'up'
     }
     else if (e.keyCode == '40') {
         e.preventDefault()
-        socket.emit('move', {dir: 'down'})
+        dirStr = 'down'
     }
     else if (e.keyCode == '37') {
         e.preventDefault()
-        socket.emit('move', {dir: 'left'})
+        dirStr = 'left'
     }
     else if (e.keyCode == '39') {
         e.preventDefault()
-        socket.emit('move', {dir: 'right'})
+        dirStr = 'right'
+    }
+
+    if (dirStr !== 'none') {
+        socket.emit('move', {dir: dirStr})
+        dir.innerHTML = 'input: ' + dirStr
     }
 }

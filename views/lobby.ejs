@@ -3,17 +3,33 @@
     <head>
         <style>
             body{background: black; font-family: monospace; color: white; text-align: center}
-            canvas{width: 640px; height: 640px; border: solid 2px rgb(100, 200, 50); margin: 20px}
+            #canvas{display: inline-block; width: 640px; height: 640px;
+                border: solid 2px rgb(100, 200, 50); margin: 20px; font-size: 30px}
+            #gameElts{display:flex; justify-content: center; align-items: center;}
+            #instuctions{margin: 10px}
+            .boxed{border: solid 1px white; padding: 10px}
         </style>
     </head>
     <body>
+
         <h2>Lobby: <%= data.lobby %></h2>
-        <div id='userList'>Users:</div>
-        <div>
+        <div id='userList'></div>
+
+        <div id='gameElts'>
+            <div id='instructions' class='boxed'>
+                <h2>instructions</h2>
+                <h3>-the game will start when everyone is ready</h3>
+                <h3>-use the arrow keys to move</h3>
+                <h3 id='colorInst'>-you control the snake with your color</h3>
+                <h3>-last man (or woman) standing wins</h3>
+                <button id='goAway'>ok go away</button>
+            </div>
             <canvas id='canvas'></canvas>
         </div>
+        <h3 id='dir'></h3>
         <input id='checkbox' type='checkbox'>I'm ready</input>
         <h1 id='outcome'></h1>
+
     </body>
     <script src="./socket.io/socket.io.js"></script>
     <script> let lobby = <%- JSON.stringify(data.lobby) %>; let name = <%- JSON.stringify(data.name) %></script>

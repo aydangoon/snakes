@@ -22,7 +22,7 @@ app.post('/lobby', urlEncodedParser, (req, res) => {
     res.render('lobby', {data: req.body})
 })
 
-const PORT = process.env.PORT || 8080 //8080 when uploading files to gcloud
+const PORT = process.env.PORT || 8080 //8080 when uploading files to gcloud, 3000 otherwise
 server.listen(PORT, () => {
     //console.log('server started')
 })

@@ -3,17 +3,39 @@
     <head>
         <style>
             body{background: black; font-family: monospace; color: white; text-align: center;}
+            .boxed{border: solid 2px white; padding: 20px; margin: auto;
+                width: 300px; margin-top: 20px; margin-bottom: 20px}
+            form > * {margin: 10px}
+            input{padding: 10px}
+            #credits{color: black}
+            #credits:hover{color:white}
         </style>
     </head>
     <body>
-        <p>hello world</p>
+        <h1>Snake Battle Royale!</h1>
+        <h3 style='color: rgb(150, 255, 180)'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;____<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/ . .\<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \ ---< <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\  /<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;___/ /<br>
+            -=:____/<br>
+        </h3>
+        <div class='boxed'>
+            <p>1) Enter a name </p>
+            <p>2) Join an existing lobby by entering the lobby ID <br> <b>or</b> <br> create a
+                new lobby with a new ID
+            <p>
+        </div>
+        <div class='boxed'>
         <form id='joinForm' method='POST' action='/lobby'>
             <label for='name'>name:</label><br>
-            <input type='text' name='name' value='<%= qs.who %>'></input><br>
+            <input type='text' name='name' value='<%= qs.who || "nobody" + Math.floor(Math.random()*100) %>'></input><br>
             <label for='lobby' >lobby ID:</label><br>
             <input type='text' name='lobby' value='<%= qs.dept %>'></input><br>
             <input type="submit" value="join">
         </form>
+        </div>
+        <p id='credits'>Built by Aydan Gooneratne with the op tools that are nodejs, socket.io, express and ejs. <br> contact: aydan.gooneratne@gmail.com<p>
         <script src="./js/index.js"></script>
     </body>
 </html>

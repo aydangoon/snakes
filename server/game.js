@@ -1,25 +1,32 @@
-function Snake(num, name, initPos) {
+function Snake(name, initPos, color) {
 
-    this.num = num
     this.name = name
+    this.color = color
     this.dir = [0, 1]
-    this.pos = initPos
-    this.body = [this.pos]
+    this.body = [initPos]
     this.alive = true
 
     this.setDir = (strDir) => {
         switch(strDir) {
             case 'left':
-                this.dir = [0, -1]
+                if (this.body.length == 1 || !(this.dir[1] == 1)) {
+                    this.dir = [0, -1]
+                }
                 break
             case 'right':
-                this.dir = [0, 1]
+                if (this.body.length == 1 || !(this.dir[1] == -1)) {
+                    this.dir = [0, 1]
+                }
                 break
             case 'down':
-                this.dir = [1, 0]
+                if (this.body.length == 1 || !(this.dir[0] == -1)) {
+                    this.dir = [1, 0]
+                }
                 break
             case 'up':
-                this.dir = [-1, 0]
+                if (this.body.length == 1 || !(this.dir[0] == 1)) {
+                    this.dir = [-1, 0]
+                }
                 break
         }
     }
@@ -32,6 +39,7 @@ function Game(users, numUsers) {
     this.winner = 'nobody'
     this.numSnakes = numUsers
     this.numAlive = numUsers
+    this.fruitPos = [0, 0]
 
     this.board = []
     for (var r = 0; r < 4 * numUsers; r++) {
@@ -56,6 +64,7 @@ function Game(users, numUsers) {
 
         var randPos = this.pickEmptySpot(this.board.length)
         console.log('FRUIT MOVED', randPos)
+        this.fruitPos = randPos
         this.board[randPos[0]][randPos[1]] = -1
 
     }
@@ -65,8 +74,8 @@ function Game(users, numUsers) {
     this.snakes = {}
     for (var uid in users) {
         var randPos = this.pickEmptySpot(this.board.length - 2)
-        this.snakes[uid] = new Snake(users[uid].num, users[uid].name, randPos)
-        this.board[randPos[0]][randPos[1]] = this.snakes[uid].num
+        this.snakes[uid] = new Snake(users[uid].name, randPos, users[uid].color)
+        this.board[randPos[0]][randPos[1]] = 1
         console.log(this.snakes[uid])
     }
 
@@ -106,13 +115,13 @@ function Game(users, numUsers) {
             var snake = this.snakes[id]
             if (snake.alive) {
                 var head = snake.body[snake.body.length - 1]
-                this.board[head[0]][head[1]] = snake.num
+                this.board[head[0]][head[1]] = 1
                 if (!foundFruit){
                     snake.body.shift()
                 }
             } else {
                 var tail = snake.body[0]
-                this.board[tail[0]][tail[1]] = snake.num
+                this.board[tail[0]][tail[1]] = 1
             }
         }
 

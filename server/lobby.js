@@ -13,7 +13,23 @@ function Lobby(name) {
 
     this.addUser = (userId, username) => {
 
-        var user = new User(username, this.numUsers + 1)
+        var color, uniqueColor
+        do {
+
+            color = {r: 50 + 10*(Math.floor(Math.random()*20)),
+                g: 50 + 10*(Math.floor(Math.random()*20)), b: 50 + 10*(Math.floor(Math.random()*20))}
+            uniqueColor = true
+
+            for (var uid in this.users) {
+                if (this.users[uid].sameColor(color)) {
+                    uniqueColor = false
+                }
+            }
+        } while (!uniqueColor)
+
+        console.log('here')
+
+        var user = new User(username, color)
         this.users[userId] = user
 
         this.numUsers++
@@ -24,13 +40,6 @@ function Lobby(name) {
 
     //invariant: only called when room has that user
     this.removeUser = (userId) => {
-
-        const num = this.users[userId].num
-        for (var uid in this.users) {
-            if (this.users[uid].num > num) {
-                this.users[uid].num--
-            }
-        }
 
         delete this.users[userId]
         this.numUsers--
@@ -58,7 +67,7 @@ function Lobby(name) {
         }
 
         this.game = new Game(this.users, this.numUsers)
-        
+
         io.to(this.name).emit('game-state-change', {game: this.game})
         this.tickClock = setInterval(this.sendGameChangesToClient, 500)
 
