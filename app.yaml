@@ -1,0 +1,7 @@
+runtime: nodejs10
+
+network:
+  session_affinity: true
+
+manual_scaling:
+  instances: 1

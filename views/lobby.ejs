@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            body{background: black; font-family: monospace; color: white; text-align: center}
+            canvas{width: 640px; height: 640px; border: solid 2px rgb(100, 200, 50); margin: 20px}
+        </style>
+    </head>
+    <body>
+        <h2>Lobby: <%= data.lobby %></h2>
+        <div id='userList'>Users:</div>
+        <div>
+            <canvas id='canvas'></canvas>
+        </div>
+        <input id='checkbox' type='checkbox'>I'm ready</input>
+        <h1 id='outcome'></h1>
+    </body>
+    <script src="./socket.io/socket.io.js"></script>
+    <script> let lobby = <%- JSON.stringify(data.lobby) %>; let name = <%- JSON.stringify(data.name) %></script>
+    <script src="./js/ejs/ejs.js"></script>
+    <script>
+        const socket = io()
+    </script>
+    <script src="./js/lobby.js"></script>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            body{background: black; font-family: monospace; color: white; text-align: center;}
+        </style>
+    </head>
+    <body>
+        <p>hello world</p>
+        <form id='joinForm' method='POST' action='/lobby'>
+            <label for='name'>name:</label><br>
+            <input type='text' name='name' value='<%= qs.who %>'></input><br>
+            <label for='lobby' >lobby ID:</label><br>
+            <input type='text' name='lobby' value='<%= qs.dept %>'></input><br>
+            <input type="submit" value="join">
+        </form>
+        <script src="./js/index.js"></script>
+    </body>
+</html>
