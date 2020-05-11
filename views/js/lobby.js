@@ -95,13 +95,15 @@ socket.on('game-state-change', ({game}) => {
         ctx.stroke()
     }
 
-    var snake, alive
+    var snake, alive, r, g, b
     for (var sid in snakes) {
         snake = snakes[sid]
-        var color = `rgb(${snake.color.r}, ${snake.color.g}, ${snake.color.b})`
         alive = snake.alive
         for (var i = 0; i < snake.body.length; i++) {
-            ctx.fillStyle = color
+            r = snake.color.r - (3 * i) >= 0 ? snake.color.r - (3 * i) : 0
+            g = snake.color.g - (3 * i) >= 0 ? snake.color.g - (3 * i) : 0
+            b = snake.color.b - (3 * i) >= 0 ? snake.color.b - (3 * i) : 0
+            ctx.fillStyle = `rgb(${r}, ${g}, ${b})`
             ctx.fillRect(sw * snake.body[i][1], sh * snake.body[i][0], sw, sh)
             if (!alive) {
                 ctx.fillStyle = 'white'

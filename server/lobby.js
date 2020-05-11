@@ -69,7 +69,7 @@ function Lobby(name) {
         this.game = new Game(this.users, this.numUsers)
 
         io.to(this.name).emit('game-state-change', {game: this.game})
-        this.tickClock = setInterval(this.sendGameChangesToClient, 500)
+        this.tickClock = setInterval(this.sendGameChangesToClient, 3000)
 
     }
 
