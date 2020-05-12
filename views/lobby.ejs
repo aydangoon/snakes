@@ -8,6 +8,23 @@
             #gameElts{display:flex; justify-content: center; align-items: center;}
             #instuctions{margin: 10px}
             .boxed{border: solid 1px white; padding: 10px}
+
+            /*Chat CSS*/
+            #chatBox{text-align: left; width: 400px; height: 400px; overflow-y: scroll; overflow-x: hidden;
+                border: solid 1px rgb(80, 80, 80); margin-bottom: 10px}
+            #chatBox > * {padding: 20px 5px 20px 5px}
+            #chatBox :nth-child(odd) {background: rgb(50, 150, 50)}
+            #chatBox :nth-child(even) {background: rgb(40, 40, 40)}
+
+            #chatInput {background: rgb(80, 80, 80); padding: 5px; border: none; color: white; width: 75%}
+            #chatSubmit {background: rgb(50, 100, 50); color: white; padding: 5px; border: none; width: 20%}
+            #chatSubmit:hover {background: rgb(50, 150, 50)}
+
+            /*Scroll bar*/
+            ::-webkit-scrollbar {width: 10px;}
+            ::-webkit-scrollbar-thumb {background: rgb(50, 100, 50)}
+            ::-webkit-scrollbar-track {background: rgb(80, 80, 80)}
+
         </style>
     </head>
     <body>
@@ -25,6 +42,11 @@
                 <button id='goAway'>ok go away</button>
             </div>
             <canvas id='canvas'></canvas>
+            <div id='chatArea'>
+                <div id='chatBox'></div>
+                <input id='chatInput'></input>
+                <button id='chatSubmit'>send</button>
+            </div>
         </div>
         <h3 id='dir'></h3>
         <input id='checkbox' type='checkbox'>I'm ready</input>

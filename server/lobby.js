@@ -1,6 +1,7 @@
 var { io } = require('../app.js')
 var User = require('./user.js')
 var Game = require('./game.js')
+var Bot = require('./bot.js')
 
 //Lobby Class
 function Lobby(name) {
@@ -9,7 +10,10 @@ function Lobby(name) {
     this.numUsers = 0
     this.game = undefined
     this.tickClock = undefined
+    this.countDownClock = undefined
+    this.countDownNum = 5
     this.name = name
+    this.bot = new Bot()
 
     this.addUser = (userId, username) => {
 
@@ -27,12 +31,23 @@ function Lobby(name) {
             }
         } while (!uniqueColor)
 
-        console.log('here')
-
+        let notUniqueCount = 1
+        for (var uid in this.users) {
+            if (this.users[uid].name === username) {
+                notUniqueCount++
+            }
+        }
+        if (notUniqueCount > 1) {
+            username += notUniqueCount
+        }
         var user = new User(username, color)
+
         this.users[userId] = user
 
         this.numUsers++
+
+        let msg = 'SnakeB0t: ' + this.bot.greet(username)
+        io.to(userId).emit('get-message', ({msg}))
 
         console.log('*USER ADDED* users state: ', this.users)
 
@@ -68,8 +83,25 @@ function Lobby(name) {
 
         this.game = new Game(this.users, this.numUsers)
 
-        io.to(this.name).emit('game-state-change', {game: this.game})
-        this.tickClock = setInterval(this.sendGameChangesToClient, 3000)
+        io.to(this.name).emit('count-down', {count: this.countDownNum})
+        this.countDownNum--
+
+        this.countDownClock = setInterval(this.countDown, 1000)
+
+    }
+
+    this.countDown = () => {
+
+        io.to(this.name).emit('count-down', {count: this.countDownNum})
+
+        if (this.countDownNum == 0) {
+            clearInterval(this.countDownClock)
+            this.countDownNum = 6
+            io.to(this.name).emit('game-state-change', {game: this.game})
+            this.tickClock = setInterval(this.sendGameChangesToClient, 500)
+        }
+
+        this.countDownNum--
 
     }
 
@@ -86,6 +118,18 @@ function Lobby(name) {
         console.log('lobby starting')
         this.startGame()
         io.to(this.name).emit('game-start')
+
+    }
+
+    this.handleMessage = (userId, msg) => {
+
+        let name = this.users[userId].name
+        io.to(this.name).emit('get-message', {msg: name + ': ' + msg})
+
+        if (msg.substring(0, 1) === '!') {
+            let botMsg = this.bot.handleCommand(msg)
+            io.to(this.name).emit('get-message', {msg: 'SnakeB0t: ' + botMsg})
+        }
 
     }
 

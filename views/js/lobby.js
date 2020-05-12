@@ -63,9 +63,20 @@ function fix_dpi() {
     //get CSS width
     let style_width = +getComputedStyle(canvas).getPropertyValue("width").slice(0, -2)
     //scale the canvas
+    //let max = Math.max(style_height, style_width)
+
     canvas.setAttribute('height', style_height * dpi)
     canvas.setAttribute('width', style_width * dpi)
 }
+
+socket.on('count-down', ({count}) => {
+
+    fix_dpi()
+    ctx.fillStyle = 'white'
+    ctx.font = '30px monospace'
+    ctx.fillText(count, canvas.width/2, canvas.height/2)
+
+})
 
 socket.on('game-state-change', ({game}) => {
 
@@ -95,14 +106,15 @@ socket.on('game-state-change', ({game}) => {
         ctx.stroke()
     }
 
-    var snake, alive, r, g, b
+    var snake, alive, r, g, b, fade
     for (var sid in snakes) {
         snake = snakes[sid]
         alive = snake.alive
         for (var i = 0; i < snake.body.length; i++) {
-            r = snake.color.r - (3 * i) >= 0 ? snake.color.r - (3 * i) : 0
-            g = snake.color.g - (3 * i) >= 0 ? snake.color.g - (3 * i) : 0
-            b = snake.color.b - (3 * i) >= 0 ? snake.color.b - (3 * i) : 0
+            fade = (5 * (snake.body.length - (i+1)))
+            r = snake.color.r - fade >= 0 ? snake.color.r - fade : 0
+            g = snake.color.g - fade >= 0 ? snake.color.g - fade : 0
+            b = snake.color.b - fade >= 0 ? snake.color.b - fade : 0
             ctx.fillStyle = `rgb(${r}, ${g}, ${b})`
             ctx.fillRect(sw * snake.body[i][1], sh * snake.body[i][0], sw, sh)
             if (!alive) {
@@ -145,6 +157,8 @@ document.onkeydown = (e) => {
     else if (e.keyCode == '39') {
         e.preventDefault()
         dirStr = 'right'
+    } else if (e.keyCode == '13') {
+        chatSubmit.onclick()
     }
 
     if (dirStr !== 'none') {
@@ -152,3 +166,24 @@ document.onkeydown = (e) => {
         dir.innerHTML = 'input: ' + dirStr
     }
 }
+
+//Chat Stuff
+let chatSubmit = document.getElementById('chatSubmit')
+let chatInput = document.getElementById('chatInput')
+let chatBox = document.getElementById('chatBox')
+
+chatSubmit.onclick = () => {
+    var msg = chatInput.value
+    if (msg !== '') {
+        chatInput.value = ''
+        socket.emit('send-message', {msg})
+    }
+}
+
+socket.on('get-message', ({msg}) => {
+    console.log(msg)
+    let msgDiv = document.createElement("DIV")
+    msgDiv.innerText = msg
+    chatBox.appendChild(msgDiv)
+    chatBox.scrollTop = chatBox.scrollHeight
+})

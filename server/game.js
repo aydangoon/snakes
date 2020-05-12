@@ -47,7 +47,7 @@ function Game(users, numUsers) {
         for (var c = 0; c < 4 * numUsers; c++) {
             this.board[r].push(0)
         }
-        console.log(this.board[r])
+        //console.log(this.board[r])
     }
 
     this.pickEmptySpot = (cutoff) => {
@@ -55,6 +55,7 @@ function Game(users, numUsers) {
         do {
             x = Math.floor(Math.random()*cutoff)
             y = Math.floor(Math.random()*cutoff)
+            console.log('testing:', [x, y])
         } while (this.board[x][y] != 0)
         return [x, y]
     }
@@ -64,6 +65,15 @@ function Game(users, numUsers) {
 
         var randPos = this.pickEmptySpot(this.board.length)
         console.log('FRUIT MOVED', randPos)
+        console.log('BOARD')
+
+        for (var i = 0; i < this.board.length; i++) {
+            var abc = ''
+            for(var j = 0; j < this.board.length; j++) {
+                abc += this.board[i][j]
+            }
+            console.log(abc)
+        }
         this.fruitPos = randPos
         this.board[randPos[0]][randPos[1]] = -1
 
@@ -76,7 +86,7 @@ function Game(users, numUsers) {
         var randPos = this.pickEmptySpot(this.board.length - 2)
         this.snakes[uid] = new Snake(users[uid].name, randPos, users[uid].color)
         this.board[randPos[0]][randPos[1]] = 1
-        console.log(this.snakes[uid])
+        //console.log(this.snakes[uid])
     }
 
     this.updateState = () => {
@@ -98,7 +108,7 @@ function Game(users, numUsers) {
             if (snake.alive) {
                 var oh = snake.body[snake.body.length - 1]
                 var nh = [oh[0] + snake.dir[0], oh[1] + snake.dir[1]]
-                if (nh[0] < 0 || nh[1] < 0 || nh[0] >= this.board.length || nh[1] >= this.board.length || this.board[nh[0]][nh[1]] > 0) {
+                if (nh[0] < 0 || nh[1] < 0 || nh[0] >= this.board.length || nh[1] >= this.board.length || this.board[nh[0]][nh[1]] == 1) {
                     snake.alive = false
                     this.numAlive--
                 } else {
@@ -113,14 +123,18 @@ function Game(users, numUsers) {
         //filling the board with the new head appropriate colors
         for (var id in this.snakes) {
             var snake = this.snakes[id]
+            var tail = snake.body[0]
             if (snake.alive) {
                 var head = snake.body[snake.body.length - 1]
                 this.board[head[0]][head[1]] = 1
+
                 if (!foundFruit){
                     snake.body.shift()
+                } else {
+                    this.board[tail[0]][tail[1]] = 1
                 }
+                
             } else {
-                var tail = snake.body[0]
                 this.board[tail[0]][tail[1]] = 1
             }
         }

@@ -46,12 +46,21 @@ io.on('connection', (socket) => {
             lobbies[lobby] = new Lobby(lobby)
         }
 
-        lobbies[lobby].addUser(socket.id, name)
         lobbyOf[socket.id] = lobby
         socket.join(lobby)
 
+        lobbies[lobby].addUser(socket.id, name)
+
         io.to(lobby).emit('user-list-change', { users: lobbies[lobby].getUserList() })
 
+    })
+
+    //Chats
+    socket.on('send-message', ({msg}) => {
+        let lobbyName = lobbyOf[socket.id]
+        if (lobbies.hasOwnProperty(lobbyName)) {
+            lobbies[lobbyName].handleMessage(socket.id, msg)
+        }
     })
 
     //Checkbox clicked
