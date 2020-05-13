@@ -2,28 +2,92 @@
 <html>
     <head>
         <style>
+            :root {--lgreen: rgb(50, 150, 50); --dgreen: rgb(50, 100, 50); --lgrey: rgb(80, 80, 80); --dgrey: rgb(40, 40, 40)}
             body{background: black; font-family: monospace; color: white; text-align: center}
-            #canvas{display: inline-block; width: 640px; height: 640px;
+            #canvas{display: inline-block; width: 560px; height: 560px;
                 border: solid 2px rgb(100, 200, 50); margin: 20px; font-size: 30px}
-            #gameElts{display:flex; justify-content: center; align-items: center;}
-            #instuctions{margin: 10px}
+            #gameElts{display:flex; justify-content: center; align-items: center; margin: 20px;}
             .boxed{border: solid 1px white; padding: 10px}
 
-            /*Chat CSS*/
-            #chatBox{text-align: left; width: 400px; height: 400px; overflow-y: scroll; overflow-x: hidden;
-                border: solid 1px rgb(80, 80, 80); margin-bottom: 10px}
-            #chatBox > * {padding: 20px 5px 20px 5px}
-            #chatBox :nth-child(odd) {background: rgb(50, 150, 50)}
-            #chatBox :nth-child(even) {background: rgb(40, 40, 40)}
+            /*Instruction Button*/
+            @keyframes fade-in {
+                from {background-color: rgb(0,0,0,0)}
+                to {background-color: rgb(0,0,0,0.4)}
+            }
 
-            #chatInput {background: rgb(80, 80, 80); padding: 5px; border: none; color: white; width: 75%}
-            #chatSubmit {background: rgb(50, 100, 50); color: white; padding: 5px; border: none; width: 20%}
-            #chatSubmit:hover {background: rgb(50, 150, 50)}
+            @keyframes fade-in-content {
+                from {background-color: rgb(80, 80, 80, 0)}
+                to {background-color: rgb(80, 80, 80, 1)}
+            }
+
+            #instrButton{font-size: 20px; background-color: var(--dgreen); padding: 20px; width: 50%; margin: auto; margin-bottom: 30px;}
+            #instrButton:hover {background-color: var(--lgreen)}
+
+            .modal {
+                  display: none; /* Hidden by default */
+                  position: fixed; /* Stay in place */
+                  z-index: 1; /* Sit on top */
+                  left: 0;
+                  top: 0;
+                  padding-top: 200px;
+                  width: 100%; /* Full width */
+                  height: 100%; /* Full height */
+                  overflow: auto; /* Enable scroll if needed */
+                  animation-name: fade-in;
+                  animation-duration: 0.5s;
+                  background-color: rgb(0,0,0,0.4)
+
+            }
+
+            /* Modal Content */
+            .modal-content {
+                animation-name: fade-in-content;
+                animation-duration: 0.5s;
+                background-color: var(--lgrey);
+                margin: auto;
+                padding: 20px;
+                width: 80%;
+            }
+
+            /* The Close Button */
+            .close {
+                color: var(--dgrey);
+                float: right;
+                font-size: 28px;
+                font-weight: bold;
+            }
+
+            .close:hover,
+            .close:focus {
+              color: white;
+              text-decoration: none;
+              cursor: pointer;
+            }
+
+            .itemExp {display: flex; justify-content: space-around; align-items: center; border: solid 2px white; background: var(--dgrey); margin: 10px}
+            .itemCans {width: 50px; height: 50px;}
+
+
+            /*Chat CSS*/
+            #chatLabel{background: var(--lgrey); text-align: center; font-size: 20px; margin-right: 50%; padding: 20px;}
+            #chatBox{text-align: left; width: 400px; height: 400px; overflow-y: scroll; overflow-x: hidden;
+                border: solid 10px var(--lgrey); border-right-style: hidden; margin-bottom: 10px}
+            #chatBox > * {padding: 20px 5px 20px 5px}
+            #chatBox :nth-child(odd) {background: var(--dgreen)}
+            #chatBox :nth-child(even) {background: var(--dgrey)}
+
+            #chatInput {background: var(--dgrey); padding: 5px; border: none; color: white; width: 75%}
+
+            #chatInput:hover,
+            #chatInput:focus {background: var(--lgrey)}
+
+            #chatSubmit {background: var(--dgreen); color: white; padding: 5px; border: none; width: 20%}
+            #chatSubmit:hover {background: var(--lgreen)}
 
             /*Scroll bar*/
             ::-webkit-scrollbar {width: 10px;}
-            ::-webkit-scrollbar-thumb {background: rgb(50, 100, 50)}
-            ::-webkit-scrollbar-track {background: rgb(80, 80, 80)}
+            ::-webkit-scrollbar-thumb {background: var(--lgreen)}
+            ::-webkit-scrollbar-track {background: var(--lgrey)}
 
         </style>
     </head>
@@ -31,21 +95,38 @@
 
         <h2>Lobby: <%= data.lobby %></h2>
         <div id='userList'></div>
-
         <div id='gameElts'>
-            <div id='instructions' class='boxed'>
-                <h2>instructions</h2>
-                <h3>-the game will start when everyone is ready</h3>
-                <h3>-use the arrow keys to move</h3>
-                <h3 id='colorInst'>-you control the snake with your color</h3>
-                <h3>-last man (or woman) standing wins</h3>
-                <button id='goAway'>ok go away</button>
-            </div>
             <canvas id='canvas'></canvas>
-            <div id='chatArea'>
-                <div id='chatBox'></div>
-                <input id='chatInput'></input>
-                <button id='chatSubmit'>send</button>
+            <div id='chatAndInstructions'>
+                <div id='instrButton'>How to Play</div>
+                <div id="instructions" class="modal">
+                  <div class="modal-content">
+                    <span id='closeButton' class="close">&times;</span>
+                    <h2>Snake Battle Royale</h2>
+                    <p>You control the snake with your name color.</p>
+                    <p>Use the arrow keys to move your snake.</p>
+                    <p>Last man (or woman) standing wins!</p>
+                    <div id='fruitExp' class='itemExp'>
+                        <div>
+                            <h2>Fruit:</h2>
+                            <p>Grows your snake by one unit.</p>
+                        </div>
+                        <canvas id='fruitExpCanvas' class='itemCans'></canvas>
+                    </div>
+                    <div class='itemExp'>
+                        <div>
+                            <p>More power-ups to come...</p>
+                        </div>
+                        <canvas class='itemCans'></canvas>
+                    </div>
+                  </div>
+                </div>
+                <div id='chatArea'>
+                    <div id='chatLabel'>Chat:</div>
+                    <div id='chatBox'></div>
+                    <input id='chatInput'></input>
+                    <button id='chatSubmit'>send</button>
+                </div>
             </div>
         </div>
         <h3 id='dir'></h3>

@@ -98,7 +98,7 @@ function Lobby(name) {
             clearInterval(this.countDownClock)
             this.countDownNum = 6
             io.to(this.name).emit('game-state-change', {game: this.game})
-            this.tickClock = setInterval(this.sendGameChangesToClient, 500)
+            this.tickClock = setInterval(this.sendGameChangesToClient, 300)
         }
 
         this.countDownNum--

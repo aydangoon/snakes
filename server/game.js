@@ -3,28 +3,29 @@ function Snake(name, initPos, color) {
     this.name = name
     this.color = color
     this.dir = [0, 1]
+    this.lastDir = [0, 1]
     this.body = [initPos]
     this.alive = true
 
     this.setDir = (strDir) => {
         switch(strDir) {
             case 'left':
-                if (this.body.length == 1 || !(this.dir[1] == 1)) {
+                if (this.body.length == 1 || !(this.lastDir[1] == 1)) {
                     this.dir = [0, -1]
                 }
                 break
             case 'right':
-                if (this.body.length == 1 || !(this.dir[1] == -1)) {
+                if (this.body.length == 1 || !(this.lastDir[1] == -1)) {
                     this.dir = [0, 1]
                 }
                 break
             case 'down':
-                if (this.body.length == 1 || !(this.dir[0] == -1)) {
+                if (this.body.length == 1 || !(this.lastDir[0] == -1)) {
                     this.dir = [1, 0]
                 }
                 break
             case 'up':
-                if (this.body.length == 1 || !(this.dir[0] == 1)) {
+                if (this.body.length == 1 || !(this.lastDir[0] == 1)) {
                     this.dir = [-1, 0]
                 }
                 break
@@ -42,9 +43,9 @@ function Game(users, numUsers) {
     this.fruitPos = [0, 0]
 
     this.board = []
-    for (var r = 0; r < 4 * numUsers; r++) {
+    for (var r = 0; r < 8 * numUsers; r++) {
         this.board.push([])
-        for (var c = 0; c < 4 * numUsers; c++) {
+        for (var c = 0; c < 8 * numUsers; c++) {
             this.board[r].push(0)
         }
         //console.log(this.board[r])
@@ -55,7 +56,7 @@ function Game(users, numUsers) {
         do {
             x = Math.floor(Math.random()*cutoff)
             y = Math.floor(Math.random()*cutoff)
-            console.log('testing:', [x, y])
+            //console.log('testing:', [x, y])
         } while (this.board[x][y] != 0)
         return [x, y]
     }
@@ -64,15 +65,15 @@ function Game(users, numUsers) {
     this.putFruit = () => {
 
         var randPos = this.pickEmptySpot(this.board.length)
-        console.log('FRUIT MOVED', randPos)
-        console.log('BOARD')
+        //console.log('FRUIT MOVED', randPos)
+        //console.log('BOARD')
 
         for (var i = 0; i < this.board.length; i++) {
             var abc = ''
             for(var j = 0; j < this.board.length; j++) {
                 abc += this.board[i][j]
             }
-            console.log(abc)
+            //console.log(abc)
         }
         this.fruitPos = randPos
         this.board[randPos[0]][randPos[1]] = -1
@@ -108,6 +109,7 @@ function Game(users, numUsers) {
             if (snake.alive) {
                 var oh = snake.body[snake.body.length - 1]
                 var nh = [oh[0] + snake.dir[0], oh[1] + snake.dir[1]]
+                snake.lastDir = snake.dir
                 if (nh[0] < 0 || nh[1] < 0 || nh[0] >= this.board.length || nh[1] >= this.board.length || this.board[nh[0]][nh[1]] == 1) {
                     snake.alive = false
                     this.numAlive--
@@ -133,7 +135,7 @@ function Game(users, numUsers) {
                 } else {
                     this.board[tail[0]][tail[1]] = 1
                 }
-                
+
             } else {
                 this.board[tail[0]][tail[1]] = 1
             }

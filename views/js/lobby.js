@@ -1,13 +1,27 @@
 // const socket = io()
 socket.emit('join-req', {name, lobby})
 
-const goAway = document.getElementById('goAway')
-goAway.addEventListener('click', () => {
-    document.getElementById('instructions').remove()
-})
+//Instructions stuff
+const instrButton = document.getElementById('instrButton')
+const instructions = document.getElementById('instructions')
+const fruitExpCanvas = document.getElementById('fruitExpCanvas')
+instrButton.onclick = () => {
 
-//TODO: make this your color
-const colorInst = document.getElementById('colorInst')
+    let fruitExpCTX = fruitExpCanvas.getContext('2d')
+    fix_dpi(fruitExpCanvas)
+    fruitExpCTX.strokeStyle = 'white'
+    fruitExpCTX.beginPath();
+    fruitExpCTX.arc(fruitExpCanvas.width / 2, fruitExpCanvas.width / 2, fruitExpCanvas.width / 4, 0, 2 * Math.PI);
+    fruitExpCTX.stroke();
+
+    instructions.style.display = 'block'
+
+
+}
+const closeButton = document.getElementById('closeButton')
+closeButton.onclick = () => {
+    instructions.style.display = 'none'
+}
 
 //User List Stuff
 const userList = document.getElementById('userList')
@@ -55,23 +69,23 @@ var ctx = canvas.getContext('2d')
 
 let dpi = window.devicePixelRatio
 
-function fix_dpi() {
+function fix_dpi(can) {
     //get CSS height
     //the + prefix casts it to an integer
     //the slice method gets rid of "px"
-    let style_height = +getComputedStyle(canvas).getPropertyValue("height").slice(0, -2)
+    let style_height = +getComputedStyle(can).getPropertyValue("height").slice(0, -2)
     //get CSS width
-    let style_width = +getComputedStyle(canvas).getPropertyValue("width").slice(0, -2)
+    let style_width = +getComputedStyle(can).getPropertyValue("width").slice(0, -2)
     //scale the canvas
     //let max = Math.max(style_height, style_width)
 
-    canvas.setAttribute('height', style_height * dpi)
-    canvas.setAttribute('width', style_width * dpi)
+    can.setAttribute('height', style_height * dpi)
+    can.setAttribute('width', style_width * dpi)
 }
 
 socket.on('count-down', ({count}) => {
 
-    fix_dpi()
+    fix_dpi(canvas)
     ctx.fillStyle = 'white'
     ctx.font = '30px monospace'
     ctx.fillText(count, canvas.width/2, canvas.height/2)
@@ -83,7 +97,7 @@ socket.on('game-state-change', ({game}) => {
     const snakes = game.snakes
     const fruitPos = game.fruitPos
 
-    fix_dpi()
+    fix_dpi(canvas)
 
     var sw = (canvas.width / game.board.length)
     var sh = (canvas.height / game.board.length)
@@ -183,6 +197,7 @@ chatSubmit.onclick = () => {
 socket.on('get-message', ({msg}) => {
     console.log(msg)
     let msgDiv = document.createElement("DIV")
+    msgDiv.style = 'font: 14px monospace'
     msgDiv.innerText = msg
     chatBox.appendChild(msgDiv)
     chatBox.scrollTop = chatBox.scrollHeight

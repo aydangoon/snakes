@@ -7,21 +7,29 @@ function Bot() {
     this.handleCommand = (cmdStr) => {
 
         let splCmd = cmdStr.split(' ')
-        var cmdOpts = []
+        var cmdOpts = '[no options specified]'
         var cmd = splCmd[0]
         if (splCmd.length > 1) {
-            cmdOpts = splCmd.slice(1, splCmd.length)
+            cmdOpts = cmdStr.substring(cmdStr.indexOf(' '), cmdStr.length)
+            console.log(cmdOpts)
         }
 
         switch (cmd) {
 
             case '!help':
-                return 'Currently the only command you can do is !insult [name], but do not do that.'
+                return 'Here are the commands I understand right now: \n !insult [name] \n !praise [name] \n !instructions'
             case '!insult':
                 if (cmdOpts.length > 0) {
-                    return `${cmdOpts[0]} is an uncouth bastard.`
+                    return `${cmdOpts} is an uncouth bastard.`
                 }
-                    return 'Yoshi is an uncouth bastard.'
+                return 'Yoshi is an uncouth bastard.'
+            case '!praise':
+                if (cmdOpts.length > 0) {
+                    return `${cmdOpts} is a great guy.`
+                }
+                return 'Yoshi is a great guy.'
+            case '!instructions':
+                return 'click the \"How to Play button\" lol'
             default:
                 return 'This is not a valid command my friend.'
 
