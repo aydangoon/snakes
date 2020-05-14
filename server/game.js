@@ -101,8 +101,8 @@ function Game(users, numUsers) {
             }
         }
 
-        var foundFruit = false
-
+        var foundFruit = {}
+        var fruitToBeMoved = false
         //move the snakes, killing the ones who run into stuff
         for (var id in this.snakes) {
             var snake = this.snakes[id]
@@ -115,9 +115,7 @@ function Game(users, numUsers) {
                     this.numAlive--
                 } else {
                     snake.body.push(nh)
-                    if (this.board[nh[0]][nh[1]] == -1) {
-                        foundFruit = true
-                    }
+                    foundFruit[id] = this.board[nh[0]][nh[1]] == -1
                 }
             }
         }
@@ -130,10 +128,11 @@ function Game(users, numUsers) {
                 var head = snake.body[snake.body.length - 1]
                 this.board[head[0]][head[1]] = 1
 
-                if (!foundFruit){
+                if (!foundFruit[id]){
                     snake.body.shift()
                 } else {
                     this.board[tail[0]][tail[1]] = 1
+                    fruitToBeMoved = true
                 }
 
             } else {
@@ -141,7 +140,7 @@ function Game(users, numUsers) {
             }
         }
 
-        if (foundFruit) {
+        if (fruitToBeMoved) {
             this.putFruit()
         }
 

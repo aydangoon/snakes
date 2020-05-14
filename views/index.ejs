@@ -2,17 +2,26 @@
 <html>
     <head>
         <style>
-            body{background: black; font-family: monospace; color: white; text-align: center;}
+            :root {--lgreen: rgb(50, 150, 50); --dgreen: rgb(50, 100, 50); --lgrey: rgb(80, 80, 80); --dgrey: rgb(40, 40, 40)}
+            body{background: black; font-family: 'Courier New'; font-size: 20px; color: white; text-align: center; margin: 10px;}
             .boxed{border: solid 2px white; padding: 20px; margin: auto;
                 width: 300px; margin-top: 20px; margin-bottom: 20px}
-            form > * {margin: 10px}
-            input{padding: 10px}
+            form > input {width: 50%; padding: 20px; border: none; color: white;
+                font-family: 'Courier New'; font-size: 20px; text-align: center; margin: 10px}
+
+            .inputs{background: var(--dgrey)}
+            .inputs:hover,
+            .inputs:focus {background: var(--lgrey)}
+
+            #submit{background: var(--dgreen)}
+            #submit:hover {background: var(--lgreen)}
+
             #credits{color: black}
             #credits:hover{color:white}
         </style>
     </head>
     <body>
-        <h1>Snake Battle Royale!</h1>
+        <div>Snake Battle Royale</div>
         <h3 style='color: rgb(150, 255, 180)'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;____<br>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/ . .\<br>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; \ ---< <br>
@@ -20,20 +29,20 @@
             &nbsp;&nbsp;&nbsp;&nbsp;___/ /<br>
             -=:____/<br>
         </h3>
-        <div class='boxed'>
+        <div >
+            <form id='joinForm' method='POST' action='/lobby'>
+                <label for='name'>name:</label><br>
+                <input class='inputs' type='text' name='name' value='<%= qs.who || "nobody" + Math.floor(Math.random()*100) %>'></input><br>
+                <label for='lobby' >lobby ID:</label><br>
+                <input class='inputs' type='text' name='lobby' value='<%= qs.dept || Math.floor(Math.random()*10000)%>'></input><br>
+                <input id = 'submit' type="submit" value="join"></input>
+            </form>
+        </div>
+        <div id='instructions' class='boxed' style="font-size: 14px;">
             <p>1) Enter a name </p>
             <p>2) Join an existing lobby by entering the lobby ID <br> <b>or</b> <br> create a
                 new lobby with a new ID
             <p>
-        </div>
-        <div class='boxed'>
-        <form id='joinForm' method='POST' action='/lobby'>
-            <label for='name'>name:</label><br>
-            <input type='text' name='name' value='<%= qs.who || "nobody" + Math.floor(Math.random()*100) %>'></input><br>
-            <label for='lobby' >lobby ID:</label><br>
-            <input type='text' name='lobby' value='<%= qs.dept %>'></input><br>
-            <input type="submit" value="join">
-        </form>
         </div>
         <p id='credits'>Built by Aydan Gooneratne with the op tools that are nodejs, socket.io, express and ejs. <br> contact: aydan.gooneratne@gmail.com<p>
         <script src="./js/index.js"></script>

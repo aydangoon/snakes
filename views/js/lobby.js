@@ -1,4 +1,9 @@
-// const socket = io()
+socket.on('connect', () => {
+    const sessionID = socket.id
+    console.log(sessionID)
+})
+
+
 socket.emit('join-req', {name, lobby})
 
 //Instructions stuff
@@ -83,17 +88,21 @@ function fix_dpi(can) {
     can.setAttribute('width', style_width * dpi)
 }
 
-socket.on('count-down', ({count}) => {
+socket.on('count-down', ({count, game}) => {
 
-    fix_dpi(canvas)
+    drawGame(game)
+
     ctx.fillStyle = 'white'
-    ctx.font = '30px monospace'
+    ctx.font = '30px Courier New'
     ctx.fillText(count, canvas.width/2, canvas.height/2)
 
 })
 
 socket.on('game-state-change', ({game}) => {
+    drawGame(game)
+})
 
+function drawGame(game) {
     const snakes = game.snakes
     const fruitPos = game.fruitPos
 
@@ -143,10 +152,7 @@ socket.on('game-state-change', ({game}) => {
     ctx.beginPath();
     ctx.arc(fruitPos[1] * sw + sw / 2, fruitPos[0] * sh + sh / 2, sw / 4, 0, 2 * Math.PI);
     ctx.stroke();
-
-
-
-})
+}
 
 const dir = document.getElementById('dir')
 //Handle key inputs
@@ -197,7 +203,7 @@ chatSubmit.onclick = () => {
 socket.on('get-message', ({msg}) => {
     console.log(msg)
     let msgDiv = document.createElement("DIV")
-    msgDiv.style = 'font: 14px monospace'
+    msgDiv.style = 'font: 14px Courier New; line-height: 1.5'
     msgDiv.innerText = msg
     chatBox.appendChild(msgDiv)
     chatBox.scrollTop = chatBox.scrollHeight

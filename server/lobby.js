@@ -83,7 +83,7 @@ function Lobby(name) {
 
         this.game = new Game(this.users, this.numUsers)
 
-        io.to(this.name).emit('count-down', {count: this.countDownNum})
+        io.to(this.name).emit('count-down', {count: this.countDownNum, game: this.game})
         this.countDownNum--
 
         this.countDownClock = setInterval(this.countDown, 1000)
@@ -92,13 +92,13 @@ function Lobby(name) {
 
     this.countDown = () => {
 
-        io.to(this.name).emit('count-down', {count: this.countDownNum})
+        io.to(this.name).emit('count-down', {count: this.countDownNum, game: this.game})
 
         if (this.countDownNum == 0) {
             clearInterval(this.countDownClock)
             this.countDownNum = 6
             io.to(this.name).emit('game-state-change', {game: this.game})
-            this.tickClock = setInterval(this.sendGameChangesToClient, 300)
+            this.tickClock = setInterval(this.sendGameChangesToClient, 2000)
         }
 
         this.countDownNum--

@@ -3,21 +3,20 @@
     <head>
         <style>
             :root {--lgreen: rgb(50, 150, 50); --dgreen: rgb(50, 100, 50); --lgrey: rgb(80, 80, 80); --dgrey: rgb(40, 40, 40)}
-            body{background: black; font-family: monospace; color: white; text-align: center}
-            #canvas{display: inline-block; width: 560px; height: 560px;
+            body{background: black; font-family: 'Courier New'; color: white; text-align: center}
+            #canvas{display: block; width: 560px; height: 560px;
                 border: solid 2px rgb(100, 200, 50); margin: 20px; font-size: 30px}
             #gameElts{display:flex; justify-content: center; align-items: center; margin: 20px;}
             .boxed{border: solid 1px white; padding: 10px}
 
             /*Instruction Button*/
             @keyframes fade-in {
-                from {background-color: rgb(0,0,0,0)}
-                to {background-color: rgb(0,0,0,0.4)}
-            }
-
-            @keyframes fade-in-content {
-                from {background-color: rgb(80, 80, 80, 0)}
-                to {background-color: rgb(80, 80, 80, 1)}
+                0% {
+                    opacity: 0;
+                }
+                100% {
+                    opacity: 1;
+                }
             }
 
             #instrButton{font-size: 20px; background-color: var(--dgreen); padding: 20px; width: 50%; margin: auto; margin-bottom: 30px;}
@@ -41,7 +40,7 @@
 
             /* Modal Content */
             .modal-content {
-                animation-name: fade-in-content;
+                animation-name: fade-in;
                 animation-duration: 0.5s;
                 background-color: var(--lgrey);
                 margin: auto;
@@ -64,7 +63,8 @@
               cursor: pointer;
             }
 
-            .itemExp {display: flex; justify-content: space-around; align-items: center; border: solid 2px white; background: var(--dgrey); margin: 10px}
+            .itemExp {display: flex; justify-content: space-around; align-items: center;
+                border: solid 2px white; background: var(--dgrey); margin: 10px}
             .itemCans {width: 50px; height: 50px;}
 
 
@@ -81,7 +81,8 @@
             #chatInput:hover,
             #chatInput:focus {background: var(--lgrey)}
 
-            #chatSubmit {background: var(--dgreen); color: white; padding: 5px; border: none; width: 20%}
+            #chatSubmit {background: var(--dgreen); color: white; padding: 5px;
+                border: none; width: 20%; font-family: 'Courier New'}
             #chatSubmit:hover {background: var(--lgreen)}
 
             /*Scroll bar*/
@@ -96,7 +97,10 @@
         <h2>Lobby: <%= data.lobby %></h2>
         <div id='userList'></div>
         <div id='gameElts'>
-            <canvas id='canvas'></canvas>
+            <div>
+                <canvas id='canvas'></canvas>
+                <input id='checkbox' type='checkbox'>I'm ready</input>
+            </div>
             <div id='chatAndInstructions'>
                 <div id='instrButton'>How to Play</div>
                 <div id="instructions" class="modal">
@@ -122,7 +126,7 @@
                   </div>
                 </div>
                 <div id='chatArea'>
-                    <div id='chatLabel'>Chat:</div>
+                    <div id='chatLabel'>Chat</div>
                     <div id='chatBox'></div>
                     <input id='chatInput'></input>
                     <button id='chatSubmit'>send</button>
@@ -130,7 +134,6 @@
             </div>
         </div>
         <h3 id='dir'></h3>
-        <input id='checkbox' type='checkbox'>I'm ready</input>
         <h1 id='outcome'></h1>
 
     </body>
